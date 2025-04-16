@@ -21,3 +21,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+!/storage/app/
+!/storage/app/data/
+!/storage/app/data/logement-encadrement-des-loyers.csv
+!/storage/app/data/quartiers-paris.csv

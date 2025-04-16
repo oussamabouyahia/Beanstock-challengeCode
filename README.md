@@ -4,7 +4,7 @@
 
 # 2-database architecture
 
--include the two data tables inside my storage
+-include the two data tables inside my storage /app/data
 -create tables (migration and models) for the two tables 'encadrement_logement' and 'quartier paris'
 -seeding the two tables with the csv files accordingly
 Note: I will use the sqlite by default , switching to MySQL/Postgres is straightforward , I will just adjust the `.env` file
@@ -19,11 +19,22 @@ Note: I will use the sqlite by default , switching to MySQL/Postgres is straight
 
 # 5 Tests:
 
--unit test for input validation and other steps
--feature test for the controller logic
+-feature test for the endpoint 
 
 # 6-Documentation
 
-a dedicated branch "feature/rent-range-insights"
+a dedicated branch `feature/rent-range-insights`
 each step will be committed accordingly
 code will include clear comments and meangfull variables/functions naming
+
+### CSRF Protection
+
+note: I disabled  CSRF only for this route to simplify testing.
+
+Route definition in `web.php` uses `->withoutMiddleware()`.
+
+
+## My solution approach
+I fetched the required data based on what input provided by the user (`zip_code` or `coordinates`)  
+`coordinates` already exist in the   `logement_encadrements` , so no need to check the second table
+`zip_code` only exist in the `quartiers_paris` table , so joining two tables to get the data
