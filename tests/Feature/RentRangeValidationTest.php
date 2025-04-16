@@ -16,7 +16,6 @@ test('validation fails if zip code and coordinates are missing', function () {
         'message' => 'Validation failed',
     ]);
     $this->assertStringContainsString('zip code', $response['errors']);
-
 });
 
 test('test the custom validation rule for coordinates input', function () {
@@ -45,5 +44,4 @@ test('validation passes if zip code valid', function () {
     ]);
 
     $response->assertStatus(200);
-
 });
