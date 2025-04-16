@@ -9,7 +9,7 @@
 -seeding the two tables with the csv files accordingly
 Note: I will use the sqlite by default , switching to MySQL/Postgres is straightforward , I will just adjust the `.env` file
 
-# 3 create the endpoint route \*
+# 3 create the endpoint route
 
 # 4 create controller to handle the logic
 
