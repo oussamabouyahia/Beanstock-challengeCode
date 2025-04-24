@@ -38,3 +38,10 @@ Route definition in `web.php` uses `->withoutMiddleware()`.
 I fetched the required data based on what input provided by the user (`zip_code` or `coordinates`)  
 `coordinates` already exist in the   `logement_encadrements` , so no need to check the second table
 `zip_code` only exist in the `quartiers_paris` table , so joining two tables to get the data
+
+
+### Improvement approach
+
+1- I will implement one to many relationship between models (quartiers has many logements) , so I will create a `new migration` (add the quartier_id to logements) 
+2- Seeding the foreign key column based on the `C_QUINSEE` in `quartiers_paris` and `INSEE_code` in `logements_encadrements` (match the first 5 digits , increment the last two digits by 4 (in INSEE_code) for each new `C_QUINSEE`  )- so the pattern exist is find matched INSEE_code 
+3-correct controller function , so instead of join I will fetch the matched Quartier (whether with zip_code or coordinates) and then using `with` to fetch all houses belongs to that Quartier.
