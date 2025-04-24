@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\LogementEncadrement;
+use App\Models\QuartiersParis;
 use App\Rules\ValidateCoordinates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,18 +22,28 @@ class RentRange extends Controller
             "furnished" => "required|boolean"
         ]);
     }
-
-    //function to fetch houses if coordinates are provided , query from logment_encadrement table and no need to join with quartiers_paris
+    //function to fetch houses if coordinates are provided , if coordinates in quartiers table , eager load the corresponding houses
+    //second check , if coordinates not in quartiers table I will check the logementEncadrement table
     private function getHousesByCoordinate(Request $request)
     {
 
         $validated = $this->validationRequest($request);
-        $houses = LogementEncadrement::where('geographic_point_2d', '=', $validated["coordinates"])
+        $quartierByCoordinates = QuartiersParis::with(['logementEncadrements' => function ($query) use ($validated) {
+            $query->where('room_number', '=', $validated["room_number"])
+                  ->where('construction_period', '=', $validated["construction_period"])
+                  ->where('furnished_type', '=', $validated["furnished"] ? 'furnished' : 'unfurnished');
+        }])->where('geometry_X_Y', '=', $validated["coordinates"])->cursor()->collect() ;
+
+        if ($quartierByCoordinates->isNotEmpty()) {
+            $houses = $quartierByCoordinates->pluck('logementEncadrements')->flatten();
+        }
+        //if coordinates not in quartiers table
+        else {
+            $houses = LogementEncadrement::where('geographic_point_2d', '=', $validated["coordinates"])
             ->where('room_number', '=', $validated["room_number"])
             ->where('construction_period', '=', $validated["construction_period"])
-            ->where('furnished_type', '=', $validated["furnished"] ? 'furnished' : 'unfurnished')
-            ->get();
-
+            ->where('furnished_type', '=', $validated["furnished"] ? 'furnished' : 'unfurnished')->cursor()->collect();
+        }
         if ($houses->isEmpty()) {
             abort(404, 'No logements found for the provided coordinates.');
         }
@@ -43,19 +54,24 @@ class RentRange extends Controller
             "averageRent" => $houses->avg('reference')
         ];
     }
-    //if coordinates not provided, fetch houses by join two tables
+    //if coordinates not provided, fetch houses by zip code
     private function getHousesByZipCode(Request $request)
     {
         $validated = $this->validationRequest($request);
+        // load the quartiers with the logementEncadrements (corresponding houses) based on the zip code
 
-        $houses = DB::table('quartiers_paris')
-            ->where('zip_code', '=', $validated["zip_code"])
-            ->join('logement_encadrements', 'quartiers_paris.geometry_X_Y', '=', 'logement_encadrements.geographic_point_2d')
-            ->where('room_number', '=', $validated["room_number"])
-            ->where('construction_period', '=', $validated["construction_period"])
-            ->where('furnished_type', '=', $validated["furnished"] ? 'furnished' : 'unfurnished')
-            ->get();
+        $quartiersQuery = QuartiersParis::where('zip_code', $validated["zip_code"]);
+        if (!$quartiersQuery->exists()) {
+            abort(404, 'No matching quartier found.');
+        }
 
+        $quartiers = QuartiersParis::with(['logementEncadrements' => function ($query) use ($validated) {
+            $query->where('room_number', '=', $validated["room_number"])
+                  ->where('construction_period', '=', $validated["construction_period"])
+                  ->where('furnished_type', '=', $validated["furnished"] ? 'furnished' : 'unfurnished');
+
+        }])->where('zip_code', '=', $validated["zip_code"])->cursor()->collect();
+        $houses = $quartiers->pluck('logementEncadrements')->flatten();
         if ($houses->isEmpty()) {
             abort(404, 'No logements found for the provided zip code.');
         }

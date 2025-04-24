@@ -21,7 +21,7 @@ class QuartiersParis extends Model
         'geometry_X_Y',
         'zip_code'
     ];
-    public function LogementEncadrements(): HasMany
+    public function logementEncadrements(): HasMany
     {
         return $this->hasMany(LogementEncadrement::class, 'quartier_id');
     }
