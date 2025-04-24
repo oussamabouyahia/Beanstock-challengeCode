@@ -12,15 +12,8 @@ class QuartierIdSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    //this is a helper function to convert Insee_code to C_QUINSEE
-    private function getCorrespondantC_Quinsee($quinseeString, $insee)
-    {
-        $prefix = substr($quinseeString, 0, 5);
-        $oneToTwenty = (int) substr($quinseeString, 3, 5);
-        $inseeTwoLastDigits = substr($insee, -2);
 
 
-    }
     public function run(): void
     {
         // get the list of C_QUINSEE keys and ids as values
