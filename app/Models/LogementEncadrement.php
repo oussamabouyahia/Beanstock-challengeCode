@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LogementEncadrement extends Model
 {
@@ -23,4 +24,8 @@ class LogementEncadrement extends Model
         'geographic_shape',
         'geographic_point_2d'
     ];
+    public function quartier(): BelongsTo
+    {
+        return $this->belongsTo(QuartiersParis::class, 'quartier_id');
+    }
 }
