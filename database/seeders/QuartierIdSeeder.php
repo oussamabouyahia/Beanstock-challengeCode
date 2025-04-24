@@ -12,7 +12,7 @@ class QuartierIdSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    //this function is helper function to convert Insee_code to C_QUINSEE
+    //this is a helper function to convert Insee_code to C_QUINSEE
     private function getCorrespondantC_Quinsee($quinseeString, $insee)
     {
         $prefix = substr($quinseeString, 0, 5);
@@ -26,7 +26,7 @@ class QuartierIdSeeder extends Seeder
         // get the list of C_QUINSEE keys and ids as values
         $map = QuartiersParis::pluck('id', 'C_QUINSEE')->all();
 
-
+        // I implement chunkById to avoid memory issues already logements table has more than 7000 houses
         LogementEncadrement::chunkById(100, function ($batch) use ($map) {
             foreach ($batch as $logement) {
 

@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             LogementSeeder::class,
             QuartierSeeder::class,
+            QuartierIdSeeder::class
         ]);
     }
 }
