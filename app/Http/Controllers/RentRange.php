@@ -97,24 +97,24 @@ class RentRange extends Controller
     {
         try {
             $validated = $this->validationRequest($request);
-            // if coordinates provided
-            if (!empty($validated["coordinates"])) {
-                $houses = $this->getHousesByCoordinate($request);
-                return  $this->rentResponse($houses);
-            }
-            // user provide zip code
-            else {
+            //if zip_code provided
+            if (!empty($validated["zip_code"])) {
                 $houses = $this->getHousesByZipCode($request);
-                return $this->rentResponse($houses);
+
+            } else {
+
+                $houses = $this->getHousesByCoordinate($request);
+
             }
+            return $this->rentResponse($houses);
 
         } catch (\Throwable $e) {
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Validation failed',
+                'message' => 'Validation failed' || 'internal server issue',
                 'errors' => $e->getMessage(),
-            ], 422);
+            ], 422 || 500);
         }
     }
 }
