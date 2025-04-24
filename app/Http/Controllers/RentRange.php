@@ -91,6 +91,7 @@ class RentRange extends Controller
                 $houses = $this->getHousesByZipCode($request);
                 return $this->rentResponse($houses);
             }
+
         } catch (\Throwable $e) {
 
             return response()->json([
