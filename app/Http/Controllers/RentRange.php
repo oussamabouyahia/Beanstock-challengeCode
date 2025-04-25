@@ -114,7 +114,7 @@ class RentRange extends Controller
                 'status' => 'error',
                 'message' => 'Validation failed' || 'internal server issue',
                 'errors' => $e->getMessage(),
-            ], 422 || 500);
+            ], 422);
         }
     }
 }

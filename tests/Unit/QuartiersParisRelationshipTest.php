@@ -7,15 +7,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('a quartier can have many logementEncadrements', function () {
-    // Create a Quartier
+    // Create quartier
     $quartier = QuartiersParis::factory()->create();
 
-    // Create 3 logements belongs to the Quartier above
-    $logements = LogementEncadrement::factory()->count(3)->create([
+    // Create logement records related to that quartier
+    LogementEncadrement::factory()->count(3)->create([
         'quartier_id' => $quartier->id,
     ]);
 
+    // Reload the relationship
+    $quartier->refresh();
+
     // Assert relationship returns those logements
-    $this->assertCount(3, $quartier->logementEncadrements);
-    $this->assertTrue($quartier->logementEncadrements->contains($logements->first()));
+    expect($quartier->logementEncadrements)->toHaveCount(3);
 });

@@ -41,14 +41,15 @@ test('test the custom validation rule for coordinates input', function () {
 });
 
 
+
 test('validation passes if zip code valid', function () {
-    // Setup: insert quartier and logement
-    \DB::table('quartiers_paris')->insert([
+    $quartier = \App\Models\QuartiersParis::factory()->create([
         'zip_code' => '75001',
         'geometry_X_Y' => '48.8566,2.3522',
     ]);
 
-    \DB::table('logement_encadrements')->insert([
+    \App\Models\LogementEncadrement::factory()->create([
+        'quartier_id' => $quartier->id,
         'geographic_point_2d' => '48.8566,2.3522',
         'room_number' => 2,
         'construction_period' => 'Apres 1990',
@@ -58,7 +59,6 @@ test('validation passes if zip code valid', function () {
         'reference' => 1050,
     ]);
 
-    // Make the request
     $response = $this->postJson('/rent-range', [
         'zip_code' => '75001',
         'room_number' => 2,

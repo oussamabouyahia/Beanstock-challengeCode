@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LogementEncadrement extends Model
 {
+    use HasFactory;
+
     protected $table = 'logement_encadrements';
     protected $fillable = [
         'geographic_sector',
